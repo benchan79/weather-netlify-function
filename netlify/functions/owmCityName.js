@@ -1,17 +1,17 @@
 const axios = require("axios");
 
-// const BASE_URL = `https://api.openweathermap.org/geo/1.0/`;
-// const owmAPI = axios.create({ baseURL: BASE_URL });
-// http://api.openweathermap.org/geo/1.0/direct?q=London&limit=5&appid=1e3039792caea495f5c730bd5144ded6
+const BASE_URL = `https://api.openweathermap.org/geo/1.0/`;
+const owmAPI = axios.create({ baseURL: BASE_URL });
+// https://api.openweathermap.org/geo/1.0/direct?q=London&limit=5&appid=1e3039792caea495f5c730bd5144ded6
 
 exports.handler = async function (event, context) {
   // console.log(event);
   // console.log(context);
   try {
-    const { cityName } = event.queryStringParameters;
+    const { cityName, limit } = event.queryStringParameters;
     // console.log(cityName)
-    const response = await axios.get(
-      `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=5&appid=${process.env.OWM_API_KEY}`
+    const response = await owmAPI.get(
+      `direct?q=${cityName}&limit=${limit}&appid=${process.env.OWM_API_KEY}`
     );
     // console.log(response.data[0])'
 
