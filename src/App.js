@@ -44,7 +44,7 @@ function App() {
     const url = `/.netlify/functions/reverseGeocoding?lat=${lat}&lon=${lon}`;
     try {
       const response = await fetch(url).then((res) => res.json());
-      // console.log(response);
+      console.log(response);
       setAddress(response.results[0].formatted_address)
     } catch (error) {
       console.log(error)
