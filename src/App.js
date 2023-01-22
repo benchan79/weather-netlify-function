@@ -1,13 +1,15 @@
 import "./App.css";
 import React, { useState } from "react";
 
-// http://api.openweathermap.org/geo/1.0/direct?q=London&limit=5&appid={api_key}
+// https://api.openweathermap.org/geo/1.0/direct?q=London&limit=5&appid={api_key}
 // https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}&units=metric
 
 function App() {
   const [cityName, setCityName] = useState("");
   const [coords, setCoords] = useState("");
-  const [weather, setWeather] = useState(null);
+  const [currentWeather, setCurrentWeather] = useState(null);
+  const [hourlyForecast, setHourlyForecast] = useState(null);
+  const [dailyForecast, setDailyForecast] = useState(null);
   const limit = 5;
   const units = "metric"
 
@@ -31,7 +33,9 @@ function App() {
       const response = await fetch(url).then((res) => res.json())
       // console.log("App: response");
       console.log(response);
-      setWeather(response)
+      setCurrentWeather(response.current)
+      setHourlyForecast(response.hourly)
+      setDailyForecast(response.daily)
     } catch (err) {
       console.log("App: err");
       console.log(err);
@@ -75,14 +79,24 @@ function App() {
       )}
       <p/>
       <button onClick={handleGetWeather}>Get weather</button>
-      {weather && (
+      {currentWeather && (
         <>
           <h1>
-            {weather.weather[0].description}
+            {currentWeather.weather[0].description}
           </h1>
           <h2>
-            Temp: {weather.main.temp} deg C, Wind speed: {weather.wind.speed} m/s
+            Temp: {currentWeather.main.temp} deg C, Wind speed: {currentWeather.wind.speed} m/s
           </h2>
+          {hourlyForecast && (
+            <h2>
+            Hourly: {hourlyForecast.list[0].weather[0].description}
+            </h2>
+          )}
+          {dailyForecast && (
+            <h2>
+            Daily: {dailyForecast.list[0].weather[0].description}
+            </h2>
+          )}
         </>
       )}
 

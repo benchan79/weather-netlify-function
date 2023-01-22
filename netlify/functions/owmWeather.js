@@ -1,7 +1,10 @@
 const axios = require("axios");
 
 const BASE_URL = `https://api.openweathermap.org/data/2.5/`;
-const owmAPI = axios.create({ baseURL: BASE_URL });
+const PRO_URL = "https://pro.openweathermap.org/data/2.5";
+const baseAPI = axios.create({ baseURL: BASE_URL });
+const proAPI = axios.create({ baseURL: PRO_URL });
+
 // https://api.openweathermap.org/geo/1.0/direct?q=London&limit=5&appid={api_key}
 // https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
 
@@ -11,9 +14,34 @@ exports.handler = async function (event, context) {
   try {
     const { lat, lon, units } = event.queryStringParameters;
     // console.log(lat, lon)
-    const response = await owmAPI.get(
-      `weather?lat=${lat}&lon=${lon}&appid=${process.env.OWM_API_KEY}&units=${units}`
-    );
+    const [current, hourly, daily] = await Promise.all([
+      baseAPI.get("/weather", {
+        params: {
+          lat: lat,
+          lon: lon,
+          appid: process.env.OWM_API_KEY,
+          units: units || "metric",
+        },
+      }),
+      proAPI.get("/forecast/hourly", {
+        params: {
+          lat: lat,
+          lon: lon,
+          cnt: 20,
+          appid: process.env.OWM_API_KEY,
+          units: units || "metric",
+        },
+      }),
+      baseAPI.get("/forecast/daily", {
+        params: {
+          lat: lat,
+          lon: lon,
+          cnt: 15,
+          appid: process.env.OWM_API_KEY,
+          units: units || "metric",
+        },
+      }),
+    ]);
     // console.log(response.data[0])'
 
     return {
@@ -23,7 +51,11 @@ exports.handler = async function (event, context) {
       //   lat: response.data[0].lat,
       //   lon: response.data[0].lon, 
       // }),
-      body: JSON.stringify(response.data),
+      body: JSON.stringify({
+        current: current.data,
+        hourly: hourly.data,
+        daily: daily.data,
+      }),
     };
   } catch (err) {
     console.log(`owm: err`)
