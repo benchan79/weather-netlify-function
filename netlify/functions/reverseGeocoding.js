@@ -13,8 +13,7 @@ exports.handler = async function (event, context) {
     const response = await googleAPI.get(
       `geocode/json?latlng=${lat},${lon}&key=${process.env.GOOGLE_MAPS_API_KEY}`
     );
-    console.log("netlify")
-    console.log(response.data)
+    // console.log(response.data)
     return {
       statusCode: 200,
       body: JSON.stringify(response.data),

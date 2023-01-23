@@ -1,5 +1,7 @@
 import "./App.css";
 import React, { useState } from "react";
+import Map from "./Map";
+import Express from "./Express";
 
 // https://api.openweathermap.org/geo/1.0/direct?q=London&limit=5&appid={api_key}
 // https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_key}&units=metric
@@ -44,7 +46,7 @@ function App() {
     const url = `/.netlify/functions/reverseGeocoding?lat=${lat}&lon=${lon}`;
     try {
       const response = await fetch(url).then((res) => res.json());
-      console.log(response);
+      // console.log(response);
       setAddress(response.results[0].formatted_address)
     } catch (error) {
       console.log(error)
@@ -65,6 +67,7 @@ function App() {
 
   return (
     <div className="App">
+      <Express />
       <input
         onChange={handleInputChange}
         name="city"
@@ -110,7 +113,8 @@ function App() {
           <h1>{address}</h1>
         </>
       )}
-
+      <p />
+      <Map/>
     </div>
   );
 }
