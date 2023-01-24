@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Map from "./Map";
 // import Express from "./Express";
 
@@ -13,8 +13,13 @@ function App() {
   const [hourlyForecast, setHourlyForecast] = useState(null);
   const [dailyForecast, setDailyForecast] = useState(null);
   const [address, setAddress] = useState(null)
+  const [apiKey, setApiKey] = useState("")
   const limit = 5;
   const units = "metric";
+
+  useEffect(() => {
+    handleGetKey();
+  }, [])
 
   const getCoords = async () => {
     const url = `/.netlify/functions/owmCityName?cityName=${cityName}&limit=${limit}`;
@@ -50,6 +55,16 @@ function App() {
       setAddress(response.results[0].formatted_address)
     } catch (error) {
       console.log(error)
+    }
+  };
+
+  const handleGetKey = async () => {
+    const url = `/.netlify/functions/googleMaps`;
+    try {
+      const response = await fetch(url).then((res) => res.json());
+      setApiKey(response.apiKey)
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -114,7 +129,9 @@ function App() {
         </>
       )}
       <p />
-      <Map/>
+      {apiKey && (
+        <Map apiKey={apiKey}/>
+      )}
     </div>
   );
 }
